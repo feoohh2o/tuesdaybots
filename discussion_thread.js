@@ -206,21 +206,39 @@ function main() {
   sendLog();
 }
 
-function deleteTriggers_() {
+function deleteTriggers() {
+  logTriggers();
   var triggers = ScriptApp.getProjectTriggers();
   for (var i=0; i<triggers.length; i++) {
     ScriptApp.deleteTrigger(triggers[i]);
   }
+  logTriggers();
 }
 
 
+function logTriggers() {
+  var triggers = ScriptApp.getProjectTriggers();
+  log("num triggers: " + triggers.length);
+  for (var i=0; i<triggers.length; i++) {
+    var trigger = triggers[i];
+    log("trigger at " + trigger.getEventType() + " , handler: " + trigger.getHandlerFunction());
+  }
+}
+
 function run() {
 
-   deleteTriggers_();
+   deleteTriggers();
 
   ScriptApp.newTrigger("main")
            .timeBased()
+           .everyWeeks(1)
            .onWeekDay(ScriptApp.WeekDay.MONDAY)
-           .onWeekDay(ScriptApp.WeekDay.THURSDAY)
+           .atHour(5)
            .create();
+  ScriptApp.newTrigger("main")
+           .timeBased()
+           .onWeekDay(ScriptApp.WeekDay.THURSDAY)
+           .atHour(5)
+           .create();
+  logTriggers();
 }
